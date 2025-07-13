@@ -64,3 +64,8 @@ Intern at Solv Ghana-Standard Chartered / Certified Afro Advocate
 
 
 ---
+
+---
+Screenshots
+---
+![Gemann Music Player UI](./assets/screenshot1.png)
