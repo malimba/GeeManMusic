@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gemann Music - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+    }
+
+    header {
+      background-color: #1db954;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header input[type="text"] {
+      padding: 10px;
+      width: 300px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .music-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .music-card {
+      background-color: #181818;
+      border-radius: 10px;
+      padding: 15px;
+      width: 200px;
+      text-align: center;
+    }
+
+    .music-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .music-card h3 {
+      margin: 10px 0 5px;
+    }
+
+    .player-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #282828;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .player-bar audio {
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gemann Music</h1>
+    <input type="text" id="searchInput" placeholder="Search music...">
+    <button id="logoutBtn" style="margin-left: 10px; padding: 10px; background: #fff; border: none; border-radius: 5px; cursor: pointer;">
+      Logout
+    </button>
+  </header>
+
+  <div class="music-container" id="musicContainer">
+    <!-- Music tiles will be dynamically loaded -->
+  </div>
+
+  <div class="player-bar">
+    <audio id="player" controls></audio>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      alert("Unauthorized. Please login first.");
+      window.location.href = "/";
+    }
+
+    const musicData = [
+      {
+        title: "HighLife in G'Major",
+        image: "/images/highLifenGmajor.jpeg",
+        file: "/api/music/play/HiLifeinGmajor.mp3"
+      },
+      {
+        title: "Ye Papa",
+        image: "/images/yePapa.jpeg",
+        file: "/api/music/play/GEMANN. Ye papa. Ghana hilife music..mp3"
+      },
+      {
+        title: "Ebusua",
+        image: "/images/ebususaGeeman.jpg",
+        file: "/api/music/play/Gemann - Ebusua _Deasa Records _ GP 102 CD_ 1991_ - Gemann - SoundLoadMate.com.mp3"
+      }
+    ];
+
+    const container = document.getElementById("musicContainer");
+    const player = document.getElementById("player");
+
+    function playSong(src) {
+      fetch(src, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to load song: " + response.status);
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        const audioURL = URL.createObjectURL(blob);
+        player.src = audioURL;
+        player.play();
+      })
+      .catch(err => {
+        alert("Could not play song: " + err.message);
+        console.error(err);
+      });
+    }
+
+
+    function renderCard(title, image, file) {
+      const card = document.createElement("div");
+      card.className = "music-card";
+      card.innerHTML = `
+        <img src="${image}" alt="${title}">
+        <h3>${title}</h3>
+        <button onclick="playSong('${file}')">Play</button>
+      `;
+      container.appendChild(card);
+    }
+
+    // Render default songs
+    musicData.forEach(track => {
+      renderCard(track.title, track.image, track.file);
+    });
+
+    // Fetch search results and display using player bar
+    function fetchSongs(query = '') {
+      fetch(`/api/music/list?search=${encodeURIComponent(query)}`, {
+        method: "GET",
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        container.innerHTML = "";
+        data.forEach(song => {
+          renderCard(song.name, "/images/default-cover.png", song.url);
+        });
+      });
+    }
+
+    // Attach input listener
+    document.getElementById("searchInput").addEventListener("input", function () {
+      fetchSongs(this.value);
+    });
+    //logout functionality below
+     document.getElementById("logoutBtn").addEventListener("click", function () {
+  
+
+    // Clearing local storage
+    localStorage.clear()
+
+    // Redirect to home(index page)
+    window.location.href = "/";
+  });
+  </script>
+</body>
+</html>
