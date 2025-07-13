@@ -45,7 +45,8 @@ git clone https://github.com/malimba/GeeManMusic.git
 cd geeman-music
 mvn spring-boot:run
 Then open your browser at http://localhost:8080 and feel the groove.
-
+```
+ ---
 🧪 Known Issues
 Might get nostalgic listening to the sample tracks
 
@@ -64,8 +65,9 @@ Intern at Solv Ghana-Standard Chartered / Certified Afro Advocate
 
 
 ---
+### Screenshots
 
----
-Screenshots
----
 ![Gemann Music Player UI](./assets/screenshot1.png)
+
+
+
