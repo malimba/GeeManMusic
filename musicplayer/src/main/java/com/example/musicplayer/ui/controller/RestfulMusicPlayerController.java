@@ -19,7 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 @RestController
-@RequestMapping("/api/music")
+@RequestMapping("/api/music") //http://localhost:8080/api/music
 public class RestfulMusicPlayerController{
     
     //endpoint to serve and play specific song
@@ -36,7 +36,7 @@ public class RestfulMusicPlayerController{
     }
 
     //endpoint to list songs stored on the server: used with search feature
-    @GetMapping("/list")
+    @GetMapping("/list") //http://localhost:8080/api/music/list
     public List<Map<String, String>> listSongs(@RequestParam(value="search", required=false) String query){
         File folder = new File("src/main/resources/static/music");
         File[] files = folder.listFiles(); //retrieving all files and sub-folders
